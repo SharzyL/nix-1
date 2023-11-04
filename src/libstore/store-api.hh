@@ -428,20 +428,26 @@ public:
      */
     virtual StorePath addToStore(
         std::string_view name,
-        const Path & srcPath,
-        FileIngestionMethod method = FileIngestionMethod::Recursive,
+        SourceAccessor & accessor,
+        const CanonPath & path,
+        ContentAddressMethod method = FileIngestionMethod::Recursive,
         HashType hashAlgo = htSHA256,
+        const StorePathSet & references = StorePathSet(),
         PathFilter & filter = defaultPathFilter,
-        RepairFlag repair = NoRepair,
-        const StorePathSet & references = StorePathSet());
+        RepairFlag repair = NoRepair);
 
     /**
      * Copy the contents of a path to the store and register the
      * validity the resulting path, using a constant amount of
      * memory.
      */
-    ValidPathInfo addToStoreSlow(std::string_view name, const Path & srcPath,
-        FileIngestionMethod method = FileIngestionMethod::Recursive, HashType hashAlgo = htSHA256,
+    ValidPathInfo addToStoreSlow(
+        std::string_view name,
+        SourceAccessor & accessor,
+        const CanonPath & path,
+        ContentAddressMethod method = FileIngestionMethod::Recursive,
+        HashType hashAlgo = htSHA256,
+        const StorePathSet & references = StorePathSet(),
         std::optional<Hash> expectedCAHash = {});
 
     /**
@@ -453,9 +459,13 @@ public:
      *
      * \todo remove?
      */
-    virtual StorePath addToStoreFromDump(Source & dump, std::string_view name,
-        FileIngestionMethod method = FileIngestionMethod::Recursive, HashType hashAlgo = htSHA256, RepairFlag repair = NoRepair,
-        const StorePathSet & references = StorePathSet())
+    virtual StorePath addToStoreFromDump(
+        Source & dump,
+        std::string_view name,
+        ContentAddressMethod method = FileIngestionMethod::Recursive,
+        HashType hashAlgo = htSHA256,
+        const StorePathSet & references = StorePathSet(),
+        RepairFlag repair = NoRepair)
     { unsupported("addToStoreFromDump"); }
 
     /**
